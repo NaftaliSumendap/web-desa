@@ -1,0 +1,732 @@
+/* =================================
+   VARIABEL WARNA ADMIN
+   ================================= */
+:root {
+    --dark-olive-green-1: #002400;
+    --dark-olive-green-2: #273B09; /* Latar Sidebar */
+    --dark-olive-green-3: #58641D; /* Tombol Primer */
+    --dark-olive-green-4: #7B904B; /* Tombol Edit */
+    --light-olive-green:  #BBCF8D; /* Latar Aktif & Alert */
+    --neutral-cream:      #F5F5DC; /* Latar Konten Utama */
+    --text-light:         #ffffff;
+    --text-dark:          #333333;
+    --border-color:       #e0e0e0;
+}
+
+/* =================================
+   DASAR & LAYOUT ADMIN
+   ================================= */
+body.admin-body {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--neutral-cream);
+    color: var(--text-dark);
+}
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* =================================
+   SIDEBAR (Menu Samping)
+   ================================= */
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background-color: var(--dark-olive-green-2);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.sidebar-header h2 {
+    margin: 0;
+    font-family: 'Merriweather', serif;
+    font-size: 1.5rem;
+}
+.sidebar-header h2 a {
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.sidebar-nav {
+    flex-grow: 1;
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+}
+.sidebar-nav li {
+    margin-bottom: 5px;
+}
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.sidebar-nav li a i {
+    margin-right: 12px;
+    width: 20px; /* Agar ikon rapi */
+    font-size: 1.1rem;
+}
+.sidebar-nav li a:hover {
+    background-color: var(--dark-olive-green-3);
+    color: var(--text-light);
+}
+.sidebar-nav li a.active {
+    background-color: var(--light-olive-green);
+    color: var(--dark-olive-green-1); /* Teks gelap agar kontras */
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+}
+.sidebar-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-footer li {
+    margin-bottom: 5px;
+}
+.sidebar-footer li a {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+.sidebar-footer li a i {
+    margin-right: 12px;
+    width: 20px;
+}
+.sidebar-footer li a:hover {
+    color: var(--text-light);
+}
+
+
+/* =================================
+   KONTEN UTAMA (Kanan)
+   ================================= */
+.main-content {
+    flex-grow: 1;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =================================
+   TOPBAR (Menu Atas)
+   ================================= */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    height: 70px;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+.topbar h1 {
+    margin: 0;
+    font-family: 'Merriweather', serif;
+    font-size: 1.8rem;
+    color: var(--dark-olive-green-2);
+}
+.user-info {
+    font-weight: 700;
+    color: var(--dark-olive-green-3);
+}
+.sidebar-toggle {
+    display: none; /* Sembunyi di desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--dark-olive-green-2);
+    cursor: pointer;
+}
+
+/* =================================
+   WADAH KONTEN UTAMA
+   ================================= */
+.admin-content-container {
+    padding: 30px;
+    flex-grow: 1;
+}
+
+/* Kotak putih utama */
+.admin-content-box {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+}
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+.admin-header h2 {
+    margin: 0;
+    font-family: 'Merriweather', serif;
+    font-size: 1.5rem;
+}
+/* Style untuk sub-header di form */
+.admin-header.sub-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    margin-top: 20px;
+}
+.admin-header.sub-header h3 {
+    margin: 0;
+    font-family: 'Merriweather', serif;
+    color: var(--dark-olive-green-3);
+}
+
+
+/* =================================
+   KARTU STATISTIK (Dashboard)
+   ================================= */
+.stat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: var(--text-light);
+    margin-right: 20px;
+}
+.stat-info .stat-title {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #888;
+    margin-bottom: 5px;
+}
+.stat-info .stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* =================================
+   TABEL ADMIN (Berita, Aparatur)
+   ================================= */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.admin-table th, 
+.admin-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+.admin-table thead {
+    background-color: var(--neutral-cream);
+}
+.admin-table th {
+    font-family: 'Merriweather', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-transform: uppercase;
+}
+.admin-table tbody tr:hover {
+    background-color: #fcfcfc;
+}
+.admin-table-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* =================================
+   TOMBOL (Buttons)
+   ================================= */
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-light);
+}
+.btn-primary {
+    background-color: var(--dark-olive-green-3);
+}
+.btn-primary:hover {
+    background-color: var(--dark-olive-green-2);
+}
+.btn-secondary {
+    background-color: #888;
+}
+.btn-secondary:hover {
+    background-color: #666;
+}
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+.btn-edit {
+    background-color: var(--dark-olive-green-4);
+}
+.btn-edit:hover {
+    background-color: var(--dark-olive-green-3);
+}
+.btn-delete {
+    background-color: #c0392b;
+}
+.btn-delete:hover {
+    background-color: #a93226;
+}
+
+/* =================================
+   FORMULIR (Tambah/Edit)
+   ================================= */
+.form-group {
+    margin-bottom: 25px;
+}
+.form-group label {
+    display: block;
+    font-weight: 700;
+    font-family: 'Merriweather', serif;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+.form-control,
+select.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box; /* Penting */
+    background-color: #fff;
+    color: var(--text-dark);
+}
+.form-control:focus,
+select.form-control:focus {
+    outline: none;
+    border-color: var(--dark-olive-green-3);
+    box-shadow: 0 0 5px rgba(88, 100, 29, 0.3);
+}
+textarea.form-control {
+    min-height: 150px;
+    font-family: 'Lato', sans-serif;
+}
+.form-control-file {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+.form-group small {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 30px;
+}
+
+/* =================================
+   ALERT (Pesan Sukses/Error)
+   ================================= */
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+.alert-success {
+    background-color: var(--light-olive-green);
+    color: var(--dark-olive-green-1);
+    border: 1px solid var(--dark-olive-green-4);
+}
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+.alert-danger ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+
+/* =================================
+   PAGINASI (Penomoran Halaman)
+   ================================= */
+.admin-pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+.admin-pagination nav {
+    display: flex;
+}
+/* Paginasi Sederhana Bawaan Laravel */
+.admin-pagination .pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.admin-pagination .page-item {
+    margin-left: 5px;
+}
+.admin-pagination .page-link {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    text-decoration: none;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+.admin-pagination .page-link:hover {
+    background-color: var(--neutral-cream);
+}
+.admin-pagination .page-item.disabled .page-link {
+    background-color: #f9f9f9;
+    color: #aaa;
+    border-color: #f0f0f0;
+}
+.admin-pagination .page-item.active .page-link {
+    background-color: var(--dark-olive-green-3);
+    border-color: var(--dark-olive-green-3);
+    color: var(--text-light);
+    font-weight: 700;
+}
+
+/* =================================
+   CSS BARU: Grid Dasbor
+   ================================= */
+.admin-grid-col-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dua kolom */
+    gap: 30px;
+}
+
+/* Pintasan Cepat */
+.quick-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.quick-link-item {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--neutral-cream);
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark-olive-green-2);
+    transition: all 0.3s ease;
+}
+.quick-link-item:hover {
+    background-color: var(--light-olive-green);
+    color: var(--dark-olive-green-1);
+    transform: translateX(5px);
+}
+.quick-link-item i {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    width: 30px;
+    text-align: center;
+}
+
+/* Tabel Sederhana (untuk aparatur) */
+.admin-table.simple {
+    margin-top: 0; /* Hapus margin atas */
+}
+.admin-table.simple thead {
+    display: none; /* Sembunyikan header di tabel simple */
+}
+.admin-table.simple tbody tr:first-child td {
+    border-top: 1px solid var(--border-color);
+}
+.admin-table.simple td {
+    padding: 12px 15px; /* Kurangi padding */
+}
+.admin-table.simple td small {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+
+/* =================================
+   RESPONSIVE (Mobile)
+   ================================= */
+@media (max-width: 992px) {
+    .sidebar {
+        position: fixed;
+        left: -250px; /* Sembunyi di kiri */
+        height: 100vh;
+        z-index: 998;
+    }
+    .sidebar.active {
+        left: 0; /* Muncul */
+    }
+    .sidebar-toggle {
+        display: block; /* Tampilkan tombol hamburger */
+    }
+    .topbar h1 {
+        font-size: 1.5rem;
+    }
+    .admin-grid-col-2 {
+        grid-template-columns: 1fr; /* Satu kolom di tablet/HP */
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-content-container {
+        padding: 15px;
+    }
+    .admin-content-box {
+        padding: 20px;
+    }
+    .topbar {
+        padding: 0 15px;
+    }
+    .topbar h1 {
+        display: none; /* Sembunyikan judul di HP */
+    }
+    .stat-cards-grid {
+        grid-template-columns: 1fr; /* 1 kolom di HP */
+    }
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    /* Tabel responsif */
+    .admin-table thead {
+        display: none; /* Sembunyikan header tabel */
+    }
+    .admin-table tr {
+        display: block;
+        margin-bottom: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .admin-table td {
+        display: block;
+        text-align: right;
+        padding-left: 50%; /* Ruang untuk label */
+        position: relative;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .admin-table td:last-child {
+        border-bottom: none;
+    }
+    .admin-table td::before {
+        content: attr(data-label); /* Ambil label dari atribut */
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        text-align: left;
+        font-weight: 700;
+        font-family: 'Merriweather', serif;
+        color: var(--text-dark);
+    }
+    .admin-table-actions {
+        justify-content: flex-end;
+    }
+}
+
+/* =================================
+   CSS POP-UP (TOAST)
+   ================================= */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: stretch;
+    min-width: 350px;
+    max-width: 400px;
+    z-index: 10001; /* Di atas segalanya */
+    border-left: 5px solid #ccc; /* Default border */
+
+    /* Sembunyikan & transisi */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s ease;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    font-size: 1.5rem;
+    color: #fff;
+    border-radius: 8px 0 0 8px;
+}
+
+.toast-content {
+    padding: 15px 20px;
+    flex-grow: 1;
+}
+
+.toast-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Merriweather', serif;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.toast-message {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #aaa;
+    padding: 0 15px;
+    cursor: pointer;
+}
+.toast-close:hover {
+    color: #333;
+}
+
+/* Varian Sukses (Hijau) */
+.toast.toast-success {
+    border-left-color: var(--dark-olive-green-3);
+}
+.toast.toast-success .toast-icon {
+    background-color: var(--dark-olive-green-3);
+}
+.toast.toast-success .toast-title {
+    color: var(--dark-olive-green-2);
+}
+
+/* Varian Error (Merah) */
+.toast.toast-error {
+    border-left-color: #c0392b;
+}
+.toast.toast-error .toast-icon {
+    background-color: #c0392b;
+}
+.toast.toast-error .toast-title {
+    color: #c0392b;
+}
+
+.admin-gallery-grid {
+    display: grid;
+    /* 4 kolom di desktop, 2 di tablet */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.admin-gallery-item {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-color);
+}
+
+.admin-gallery-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.admin-gallery-caption {
+    padding: 15px;
+    background: #fdfdfd;
+}
+
+.admin-gallery-caption p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    /* Potong teks jika terlalu panjang */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tombol hapus di dalam card galeri */
+.admin-gallery-caption .btn-delete {
+    width: 100%; /* Tombol lebar penuh */
+}
