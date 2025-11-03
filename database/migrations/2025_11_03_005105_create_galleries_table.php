@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+// Pastikan file migration Anda memiliki 'path'
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
+            $table->string('path'); // <-- PASTIKAN NAMA INI 'path'
+            $table->string('caption')->nullable();
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Aparatur;
 use App\Models\VillageProfile;
 use App\Models\Gallery;
+use Illuminate\Support\Facades\DB; // <-- Digunakan untuk pencarian case-insensitive
 
 class PageController extends Controller
 {
@@ -15,12 +16,16 @@ class PageController extends Controller
      */
     public function home()
     {
+        // Kode debugging telah dihapus.
+        
         $latestPosts = Post::select('id', 'judul', 'isi_berita', 'gambar', 'created_at')
                             ->latest()
                             ->take(3)
                             ->get();
 
-        $kepalaDesa = Aparatur::where('jabatan', 'Kepala Desa')
+        // Mencari 'Kepala Desa' ATAU 'Hukum Tua' (case-insensitive)
+        $kepalaDesa = Aparatur::whereIn(DB::raw('LOWER(jabatan)'), ['kepala desa', 'hukum tua'])
+                            ->orderBy('urutan', 'asc')
                             ->firstOrNew(
                                 [
                                     'nama_lengkap' => '[Nama Kades Belum Diisi]',
@@ -28,7 +33,8 @@ class PageController extends Controller
                                 ]
                             );
 
-        $aparaturList = Aparatur::where('jabatan', '!=', 'Kepala Desa')
+        // Mengambil 4 aparatur selain Kades/Hukum Tua (case-insensitive)
+        $aparaturList = Aparatur::whereNotIn(DB::raw('LOWER(jabatan)'), ['kepala desa', 'hukum tua'])
                                 ->orderBy('urutan', 'asc')
                                 ->take(4)
                                 ->get();
@@ -41,37 +47,71 @@ class PageController extends Controller
     }
 
     /**
+     * Helper function untuk mengambil staf berdasarkan ID atasan
+     */
+    private function getStafByParentId($parentId)
+    {
+        if (is_null($parentId)) {
+            return collect();
+        }
+        return Aparatur::where('parent_id', $parentId)->orderBy('urutan')->get();
+    }
+
+    /**
+     * Mengambil semua data aparatur dengan cara yang lebih efisien
+     */
+    private function getAparaturData()
+    {
+        $jabatanUtama = [
+            'kepala desa', 'hukum tua', 'sekretaris desa',
+            'kepala seksi kesejahteraan dan pelayanan', 'kepala seksi pemerintahan',
+            'kaur umum dan perencanaan', 'kaur keuangan',
+            'kepala dusun pada elo', 'kepala dusun empang'
+        ];
+        
+        $aparaturUtama = Aparatur::whereIn(DB::raw('LOWER(jabatan)'), $jabatanUtama)
+                                ->get()
+                                ->keyBy(function($item) {
+                                    return strtolower($item->jabatan);
+                                });
+        
+        $getAparat = function($jabatan) use ($aparaturUtama) {
+            return $aparaturUtama->get(strtolower($jabatan));
+        };
+
+        $kasiKes = $getAparat('kepala seksi kesejahteraan dan pelayanan');
+        $kasiPem = $getAparat('kepala seksi pemerintahan');
+        $kaurUmum = $getAparat('kaur umum dan perencanaan');
+        $kaurKeu = $getAparat('kaur keuangan');
+
+        return [
+            'kepalaDesa' => $getAparat('kepala desa') ?? $getAparat('hukum tua'),
+            'sekretaris' => $getAparat('sekretaris desa'),
+            'kasiKesejahteraan' => $kasiKes,
+            'kasiPemerintahan' => $kasiPem,
+            'kaurUmum' => $kaurUmum,
+            'kaurKeuangan' => $kaurKeu,
+            'kadusElo' => $getAparat('kepala dusun pada elo'),
+            'kadusEmpang' => $getAparat('kepala dusun empang'),
+            
+            'stafKasiKesejahteraan' => $this->getStafByParentId($kasiKes->id ?? null),
+            'stafKasiPemerintahan' => $this->getStafByParentId($kasiPem->id ?? null),
+            'stafKaurUmum' => $this->getStafByParentId($kaurUmum->id ?? null),
+            'stafKaurKeuangan' => $this->getStafByParentId($kaurKeu->id ?? null),
+
+            'galeriAparatur' => Aparatur::whereIn(DB::raw('LOWER(jabatan)'), [
+                'kaur keuangan', 'kepala seksi kesejahteraan dan pelayanan', 
+                'kaur umum dan perencanaan', 'kepala seksi pemerintahan'
+            ])->orderBy('urutan')->get()
+        ];
+    }
+
+    /**
      * Menampilkan halaman Profil Desa.
      */
     public function profil()
     {
-        // Data $desa (dari VillageProfile) sudah dibagikan secara global
-        
-        // --- Ambil data aparatur untuk bagan organisasi ---
-        $semuaAparatur = Aparatur::orderBy('urutan', 'asc')->get();
-
-        $data = [
-            'kepalaDesa' => $semuaAparatur->where('jabatan', 'Kepala Desa')->first(),
-            'sekretaris' => $semuaAparatur->where('jabatan', 'Sekretaris Desa')->first(),
-            'kasiKesejahteraan' => $semuaAparatur->where('jabatan', 'Kepala Seksi Kesejahteraan dan Pelayanan')->first(),
-            'kasiPemerintahan' => $semuaAparatur->where('jabatan', 'Kepala Seksi Pemerintahan')->first(),
-            'kaurUmum' => $semuaAparatur->where('jabatan', 'Kaur Umum dan Perencanaan')->first(),
-            'kaurKeuangan' => $semuaAparatur->where('jabatan', 'Kaur Keuangan')->first(),
-            'kadusElo' => $semuaAparatur->where('jabatan', 'Kepala Dusun Pada Elo')->first(),
-            'kadusEmpang' => $semuaAparatur->where('jabatan', 'Kepala Dusun Empang')->first(),
-            
-            'stafKasiKesejahteraan' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kepala Seksi Kesejahteraan dan Pelayanan')->first()->id ?? null),
-            'stafKasiPemerintahan' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kepala Seksi Pemerintahan')->first()->id ?? null),
-            'stafKaurUmum' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kaur Umum dan Perencanaan')->first()->id ?? null),
-            'stafKaurKeuangan' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kaur Keuangan')->first()->id ?? null),
-
-            'galeriAparatur' => $semuaAparatur->whereIn('jabatan', [
-                'Kaur Keuangan', 'Kepala Seksi Kesejahteraan dan Pelayanan', 'Kaur Umum dan Perencanaan', 'Kepala Seksi Pemerintahan'
-            ])
-        ];
-        // --- Akhir pengambilan data aparatur ---
-
-        // Kirim $data ke view 'profil'
+        $data = $this->getAparaturData();
         return view('profil', $data); 
     }
 
@@ -98,30 +138,7 @@ class PageController extends Controller
      */
     public function struktur()
     {
-        $semuaAparatur = Aparatur::orderBy('urutan', 'asc')->get();
-
-        $data = [
-            'kepalaDesa' => $semuaAparatur->where('jabatan', 'Kepala Desa')->first(),
-            'sekretaris' => $semuaAparatur->where('jabatan', 'Sekretaris Desa')->first(),
-            'kasiKesejahteraan' => $semuaAparatur->where('jabatan', 'Kepala Seksi Kesejahteraan dan Pelayanan')->first(),
-            // --- PERBAIKAN DI SINI ---
-            // Mengubah 'kasiPintahan' menjadi 'kasiPemerintahan'
-            'kasiPemerintahan' => $semuaAparatur->where('jabatan', 'Kepala Seksi Pemerintahan')->first(),
-            'kaurUmum' => $semuaAparatur->where('jabatan', 'Kaur Umum dan Perencanaan')->first(),
-            'kaurKeuangan' => $semuaAparatur->where('jabatan', 'Kaur Keuangan')->first(),
-            'kadusElo' => $semuaAparatur->where('jabatan', 'Kepala Dusun Pada Elo')->first(),
-            'kadusEmpang' => $semuaAparatur->where('jabatan', 'Kepala Dusun Empang')->first(),
-            
-            'stafKasiKesejahteraan' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kepala Seksi Kesejahteraan dan Pelayanan')->first()->id ?? null),
-            'stafKasiPemerintahan' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kepala Seksi Pemerintahan')->first()->id ?? null),
-            'stafKaurUmum' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kaur Umum dan Perencanaan')->first()->id ?? null),
-            'stafKaurKeuangan' => $semuaAparatur->where('parent_id', $semuaAparatur->where('jabatan', 'Kaur Keuangan')->first()->id ?? null),
-
-            'galeriAparatur' => $semuaAparatur->whereIn('jabatan', [
-                'Kaur Keuangan', 'Kepala Seksi Kesejahteraan dan Pelayanan', 'Kaur Umum dan Perencanaan', 'Kepala Seksi Pemerintahan'
-            ])
-        ];
-
+        $data = $this->getAparaturData();
         return view('struktur', $data);
     }
 
@@ -130,15 +147,11 @@ class PageController extends Controller
      */
     public function showBerita(Post $post)
     {
-        // $post akan otomatis diambil oleh Laravel berdasarkan ID/slug di URL
-        
-        // Ambil 3 berita lain sebagai "Berita Terkait"
         $beritaTerkait = Post::where('id', '!=', $post->id)
                                 ->latest()
                                 ->take(3)
                                 ->get();
 
-        // Kita akan membuat view 'berita-show.blade.php' nanti
         return view('berita-show', [
             'post' => $post,
             'beritaTerkait' => $beritaTerkait

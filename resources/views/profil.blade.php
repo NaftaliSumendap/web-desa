@@ -320,7 +320,7 @@
                 @forelse($galeriAparatur as $aparat)
                 <div class="aparat-card-struktur">
                     {{-- PERBAIKAN FOTO DEFAULT --}}
-                    <img src="{{ $aparat->foto ? asset('storage/' . $aparat->foto) : asset('images/default-avatar.png') }}" alt="Foto {{ $aparat->nama_lengkap }}">
+                    <img src="{{ $aparat->foto ? asset('storage/' . $aparat->foto) : asset('images/default-avatar.jpg') }}" alt="Foto {{ $aparat->nama_lengkap }}">
                     <div class="aparat-info">
                         <h4>{{ $aparat->nama_lengkap }}</h4>
                         <p>{{ $aparat->jabatan }}</p>

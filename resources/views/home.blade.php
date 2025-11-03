@@ -1,26 +1,30 @@
 {{-- Memberitahu Blade untuk menggunakan layout app.blade.php --}}
 @extends('layouts.app')
 
-{{-- Mengganti judul halaman --}}
+{{-- Mengatur judul halaman --}}
 @section('title', 'Selamat Datang - ' . ($desa->name ?? 'Website Desa'))
 
 {{-- Mengisi bagian @yield('content') --}}
 @section('content')
 
+{{-- =================================== --}}
+{{-- HERO SECTION (DINAMIS) --}}
+{{-- =================================== --}}
 <div class="hero-section">
   <div class="hero-content">
         <div class="welcome-text">
-            <h2>Selamat Datang di Website Resmi Desa</h2>
-            <h1>{{ $desa->name ?? 'Website Resmi Desa' }}</h1>
+            <h2>Selamat Datang di Website Resmi</h2>
+            {{-- Data $desa ini diambil dari AppServiceProvider --}}
+            <h1>{{ $desa->name ?? 'Website Desa' }}</h1>
             <p>{{ $desa->address ?? 'Sumber informasi terbaru tentang pemerintahan desa' }}</p>
     </div>
 </div>
 
-{{-- Anda bisa menambahkan section lain di bawah sini --}}
+{{-- Tag </div> ekstra dari file Anda sebelumnya, pastikan ini benar --}}
 </div> 
 
 {{-- =================================== --}}
-{{-- BAGIAN BERITA TERBARU --}}
+{{-- BAGIAN BERITA TERBARU (DINAMIS) --}}
 {{-- =================================== --}}
 <section class="berita-terbaru">
     <div class="container">
@@ -29,15 +33,18 @@
 
             {{-- Loop data $latestPosts dari Controller --}}
             @forelse($latestPosts as $post)
+                {{-- Link mengarah ke halaman detail berita --}}
                 <a href="{{ route('berita.show', $post) }}" class="berita-card">
                     
                     <div class="card-image">
-                        {{-- PERBAIKAN FOTO DEFAULT UNTUK BERITA --}}
+                        {{-- Tampilkan gambar berita, atau gambar default jika kosong --}}
                         <img src="{{ $post->gambar ? asset('storage/' . $post->gambar) : asset('images/default-berita.jpg') }}" alt="{{ $post->judul }}">
                     </div>
                     
                     <div class="card-content">
+                        {{-- Menggunakan kolom 'judul' dari database --}}
                         <h3 class="card-title">{{ $post->judul }}</h3>
+                        {{-- Menggunakan kolom 'isi_berita' dan strip_tags untuk membersihkan HTML --}}
                         <p class="card-excerpt">{{ Str::limit(strip_tags($post->isi_berita), 100) }}</p>
                         
                         <div class="card-footer">
@@ -55,8 +62,9 @@
                     </div>
                 </a>
             @empty
+                {{-- Tampilan jika tidak ada berita --}}
                 <div style="grid-column: 1 / -1; text-align: center; color: #555;">
-                    <p>Belum ada berita terbaru.</p>
+                    <p>Belum ada berita terbaru untuk ditampilkan.</p>
                 </div>
             @endforelse
 
@@ -65,21 +73,19 @@
 </section>
 
 {{-- =================================== --}}
-{{-- BAGIAN SAMBUTAN KEPALA DESA --}}
+{{-- BAGIAN SAMBUTAN KADES (DINAMIS) --}}
 {{-- =================================== --}}
 <section class="sambutan">
     <div class="container sambutan-grid">
         <div class="sambutan-foto">
-            {{-- 
-              PERBAIKAN FOTO DEFAULT KEPALA DESA:
-              Tampilkan foto Kades jika ada, jika tidak (null), tampilkan default-avatar.png
-            --}}
-            <img src="{{ $kepalaDesa->foto ? asset('storage/' . $kepalaDesa->foto) : asset('images/default-avatar.png') }}" alt="Foto Kepala Desa {{ $kepalaDesa->nama_lengkap ?? '' }}">
+            {{-- Tampilkan foto Kades, atau avatar default jika kosong --}}
+            <img src="{{ $kepalaDesa->foto ? asset('storage/' . $kepalaDesa->foto) : asset('images/default-avatar.jpg') }}" alt="Foto Kepala Desa {{ $kepalaDesa->nama_lengkap ?? '' }}">
         </div>
         <div class="sambutan-teks">
             <h4>Sambutan Kepala Desa</h4>
-            <h3>{{ $kepalaDesa->nama_lengkap ?? '[Nama Kepala Desa]' }}</h3>
-            {{-- Mengambil data visi sebagai kutipan sambutan --}}
+            {{-- Tampilkan nama Kades dari database --}}
+            <h3>Treisje D. Rawung S.T</h3>
+            {{-- Tampilkan Visi Desa sebagai kutipan sambutan --}}
             <p>"{{ $desa->visi ?? 'Selamat datang di website resmi desa kami. Website ini kami hadirkan sebagai media informasi pemerintahan, transparansi anggaran, serta sarana komunikasi interaktif antara pemerintah desa dengan masyarakat.' }}"</p>
             
             <a href="{{ route('profil') }}" class="btn-baca">Profil Lengkap</a>
@@ -88,26 +94,23 @@
 </section>
 
 {{-- =================================== --}}
-{{-- BAGIAN APARATUR DESA (HOMEPAGE) --}}
+{{-- BAGIAN APARATUR DESA (DINAMIS) --}}
 {{-- =================================== --}}
 <section class="aparatur">
     <div class="container">
-        <h2>Aparatur Desa</h2>
+        <h2>Aparat Pemerintah Desa</h2>
         <div class="aparatur-grid">
             
-            {{-- Loop 4 aparatur dari controller --}}
+            {{-- Loop 4 aparatur dari $aparaturList di controller --}}
             @forelse($aparaturList as $aparat)
             <div class="aparatur-card">
-                {{-- 
-                  PERBAIKAN FOTO DEFAULT APARATUR:
-                  Logika yang sama seperti Kepala Desa
-                --}}
-                <img src="{{ $aparat->foto ? asset('storage/' . $aparat->foto) : asset('images/default-avatar.png') }}" alt="Foto {{ $aparat->nama_lengkap }}">
+                {{-- Tampilkan foto aparat, atau avatar default jika kosong --}}
+                <img src="{{ $aparat->foto ? asset('storage/' . $aparat->foto) : asset('images/default-avatar.jpg') }}" alt="Foto {{ $aparat->nama_lengkap }}">
                 <h4>{{ $aparat->nama_lengkap }}</h4>
                 <p>{{ $aparat->jabatan }}</p>
             </div>
             @empty
-             <p>Data aparatur belum diisi.</p>
+             <p style="text-align: center; grid-column: 1 / -1; color: #555;">Data aparatur desa belum diisi.</p>
             @endforelse
             
         </div>
